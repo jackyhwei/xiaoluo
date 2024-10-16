@@ -40,18 +40,18 @@ class MemoryShortTime(BaseStorage):
                    emotion: str, kb_id: str, llm_type: str) -> None:
         # FIXME jacky：将" 替换成 '，以避免到前端后javascript解析json报错
         # 历史记录暂用以下命令来替换数据库：update omserver_llmlocalmemorymodel set text=replace(text, '"', '''') where text like '%"%'
-        logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^local_history={query_text}")
+        # logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^local_history={query_text}")
 
         try:
             text = query_text.encode().decode('unicode_escape')
 
-            logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^text={text}")
+            # logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^text={text}")
 
             query_words = jieba.cut(text, cut_all=False)
             query_tags = list(query_words)
             keywords = jieba.analyse.extract_tags(" ".join(query_tags), topK=20)
 
-            logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^keywords={keywords}")
+            # logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^keywords={keywords}")
 
             text = text.replace("\"", "\'")
 
@@ -72,7 +72,7 @@ class MemoryShortTime(BaseStorage):
                 llm_type=llm_type
             )
             local_memory_model.save()
-            logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^saved ok")
+            # logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^saved ok")
         except Exception as e:
             logger.exception("=> saveMemory failed: %s" % str(e))
             traceback.print_exc()

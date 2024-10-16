@@ -5,7 +5,7 @@ import traceback
 from ...config.sys_config import SysConfig
 
 from typing import List
-from .local.memory_shorttime_impl import MemoryShortTime
+from .shorttime.memory_shorttime_impl import MemoryShortTime
 from .base_storage import BaseStorage
 from ..utils.snowflake_utils import SnowFlake
 from typing import Any, Dict, List
@@ -21,14 +21,14 @@ class MemoryStorageDriver():
 
     def __init__(self, memory_storage_config: dict[str, str], cfg: SysConfig) -> None:
         self.cfg = cfg
-        logger.debug("-----------------------------------------")
+        # logger.debug("-----------------------------------------")
         self.short_memory_storage = MemoryShortTime(memory_storage_config)
         logger.debug(f"self.short_memory_storage={self.short_memory_storage}")
         if cfg.enable_longMemory:
-            from .milvus.memory_longtime_impl import MemoryLongTime
+            from .longtime.memory_longtime_impl import MemoryLongTime
             self.long_memory_storage = MemoryLongTime(memory_storage_config)
             logger.debug(f"self.long_memory_storage={self.long_memory_storage}")
-        logger.debug("-----------------------------------------")
+        # logger.debug("-----------------------------------------")
 
     def search_short_memory(self, query_text: str, your_name: str, role_name: str, user_id: int) -> list[Dict[str, str]]:
         # print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
@@ -83,7 +83,7 @@ class MemoryStorageDriver():
         # 存储短期记忆
         pk = self.get_current_entity_id()
 
-        print(f"input =======================> your_name={your_name}, role_name={role_name}, anser_text={answer_text}")
+        # print(f"input =======================> your_name={your_name}, role_name={role_name}, anser_text={answer_text}")
         # FIXME jacky: 为避免omserver.llmlocalmemorymodel表格的text字段里出现 "（双引号）从而导致对前
         #        端javascript加载内容产生影响，特将这里的"都替换为'
         #        注：search_short_memory取出时需要再将 ' 替换为 " 才能正常使用。
@@ -92,7 +92,7 @@ class MemoryStorageDriver():
             'human': self.format_your_history(your_name=your_name, query_text=query_text)
         }
 
-        print(f"save text============>answer_text={answer_text}, ========>{local_history}")
+        # print(f"save text============>answer_text={answer_text}, ========>{local_history}")
 
         self.short_memory_storage.saveMemory(pk, json.dumps(local_history), your_name, role_name, 1, 
                                              chat_id, 
@@ -104,21 +104,21 @@ class MemoryStorageDriver():
                                              llm_type,
                                              )
 
-        print(f"save text ok")
+        # print(f"save text ok")
         # 是否开启长期记忆
         if self.cfg.enable_longMemory:
             # 将当前对话语句生成摘要
             history = self.format_history(your_name=your_name, query_text=query_text, role_name=role_name, answer_text=answer_text)
             importance_score = 3
             if self.cfg.enable_summary:
-                print("start run summary...")
+                # print("start run summary...")
                 memory_summary = MemorySummary(self.cfg)
                 history = memory_summary.summary(llm_model_type=self.cfg.summary_llm_model_driver_type, input=history)
                 # 计算记忆的重要程度
-                print("start calculate importance...")
+                # print("start calculate importance...")
                 memory_importance = MemoryImportance(self.cfg)
                 importance_score = memory_importance.importance(self.cfg.summary_llm_model_driver_type, input=history)
-            print("start to save long memory...")
+            # print("start to save long memory...")
             self.long_memory_storage.saveMemory(pk, history, your_name, role_name, importance_score)
 
     def format_history(self, your_name: str, query_text: str, role_name: str, answer_text: str):

@@ -27,7 +27,7 @@ from langchain_community.callbacks.manager import get_openai_callback
 # from langsmith import Client
 from langchain.prompts import ChatPromptTemplate,MessagesPlaceholder, SystemMessagePromptTemplate
 
-from ...utils.str_utils import remove_spaces_and_tabs, remove_tabs
+from ...utils.str_utils import filter_spaces_and_tabs, filter_tabs
 from ...utils.datatime_utils import get_current_time
 
 from omserver.omagent.tools.ScheduleAdder import ScheduleAdder
@@ -81,24 +81,24 @@ class LangchainGeneration():
         from dotenv import load_dotenv
         load_dotenv()
 
-        OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-        OPENAI_BASE_URL = os.environ['OPENAI_BASE_URL']
-        OPENAI_MODEL = os.environ['OPENAI_MODEL']
+        LLM_API_KEY = os.environ.get('LLM_API_KEY', "")
+        LLM_BASE_URL = os.environ.get('LLM_BASE_URL', "")
+        LLM_MODEL = os.environ.get('LLM_MODEL', "")
 
-        if OPENAI_MODEL == None or OPENAI_MODEL == "":
-            OPENAI_MODEL = "gpt-3.5-turbo"
+        if LLM_MODEL == None or LLM_MODEL == "":
+            LLM_MODEL = "gpt-3.5-turbo"
 
         print("=================================================")
         print("=================================================")
-        print(f"LangchainGeneration, model={OPENAI_MODEL}")
+        print(f"LangchainGeneration, model={LLM_MODEL}")
         print("=================================================")
         print("=================================================")
 
         #创建llm
-        if OPENAI_BASE_URL != None and OPENAI_BASE_URL != "":
-            self._llm = ChatOpenAI(temperature=0.7, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, openai_api_base=OPENAI_BASE_URL, streaming=True)
+        if LLM_BASE_URL != None and LLM_BASE_URL != "":
+            self._llm = ChatOpenAI(temperature=0.7, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, openai_api_base=LLM_BASE_URL, streaming=True)
         else:
-            self._llm = ChatOpenAI(temperature=0.7, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY)
+            self._llm = ChatOpenAI(temperature=0.7, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY)
 
         self.total_cost = 0
         self.total_tokens = 0
@@ -229,7 +229,7 @@ class LangchainGeneration():
                     max_history=5, handle_parsing_errors=True)
             elif self._agent_mode == 1:
                 # when self._agent_mode == 1:
-                if os.environ['enable_smith'] == "True":
+                if os.environ.get('enable_smith', "False") == "True":
                     self._prompt = hub.pull("hwchase17/react")
                 else:
                     self._prompt = (SystemMessagePromptTemplate.from_template("You are a nice assistant.")
@@ -270,7 +270,7 @@ Thought:{agent_scratchpad}"
                     )
             else:
                 # when self._agent_mode == 1:
-                if os.environ['enable_smith'] == "True":
+                if os.environ.get('enable_smith', "False") == "True":
                     self._prompt = hub.pull("hwchase17/react")
                 else:
                     self._prompt = (SystemMessagePromptTemplate.from_template("You are a nice assistant.")
@@ -424,8 +424,8 @@ Thought:{agent_scratchpad}
                 self.total_cost = self.total_cost + cb.total_cost
 
                 # FIXME jacky：中文的时候需要过滤空格，但是英文又不能过滤空格，头疼
-                # content = remove_spaces_and_tabs(result)
-                content = remove_tabs(result)
+                # content = filter_spaces_and_tabs(result)
+                content = filter_tabs(result)
 
                 answer += content
                 logger.debug(f"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^chatStream:realtime_callback, answer={answer}")

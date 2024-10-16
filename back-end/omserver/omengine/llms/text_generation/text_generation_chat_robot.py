@@ -8,7 +8,7 @@ import requests
 import os
 import logging
 import json
-from ...utils.str_utils import remove_special_characters, remove_emojis, remove_spaces_and_tabs
+from ...utils.str_utils import filter_special_characters, filter_emojis, filter_spaces_and_tabs
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class TextGeneration():
                         cur_len += len(text)
                         if text:
                             # 过滤空格和制表符
-                            text = remove_spaces_and_tabs(text)
+                            text = filter_spaces_and_tabs(text)
                             answer = answer + text
                             realtime_callback(role_name, your_name, text, False)
                         yield text

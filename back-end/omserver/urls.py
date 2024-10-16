@@ -18,7 +18,7 @@ from django.urls import path
 from django.urls import re_path as url
 
 from .views import index, view_tts, view_asr, view_character, view_background, view_translator, view_livestreaming
-from .views import view_auth, view_llm, view_memory
+from .views import view_auth, view_llm, view_memory, view_ws
 
 urlpatterns = [
     url(r'^$', index.main, name='omserver/index'),
@@ -49,6 +49,7 @@ urlpatterns = [
     path('character/role/delete/<int:pk>', view_character.CharacterRole.character_role_delete, name='omserver/character_role_delete'),
     path('character/role/edit/<int:pk>', view_character.CharacterRole.character_role_modify2, name='omserver/character_role_modify2'),
     # path('character/role/detail/<int:pk>', view_character.character_role_detail, name='omserver/character_role_detail'),
+    path('character/getCharacters', view_character.CharacterRole.character_role_list_json, name='omserver/character_role_list_json'),
 
     path('character_role_template.html', view_character.CharacterRoleTemplate.character_role_template, name='omserver/character_role_template'),
 
@@ -162,4 +163,9 @@ urlpatterns = [
     path('test_vrm.html', index.test_vrm, name='test_vrm'),
     path('login_face.html', view_auth.login_face, name='login_face'),
 
+    #####################
+    # new api routers
+    #####################
+    # path('ws/<str:session>', view_ws.ws, name='ws'),
+    # path('websocket/<str:session>', view_ws.websocket, name='websocket_client'),
 ]

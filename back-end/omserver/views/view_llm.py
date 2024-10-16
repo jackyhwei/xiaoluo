@@ -84,12 +84,42 @@ def llm_settings(request):
     user_id = request.session.get("user_id")
     session_cfg = request.session.get("cfg")
 
+    logger.debug(f"get llm_setttings: user_id={user_id}, session_cfg={session_cfg}")
+
     sys_cfg_json = json.loads(session_cfg)
 
+    LLM_TYPE = ""
+    LLM_API_KEY = ""
+    LLM_SECRET_KEY = ""
+    LLM_BASE_URL = ""
+    LLM_MODEL = ""
+
+    if sys_cfg_json:
+        key1 = "llmCfg"
+        if key1 in sys_cfg_json:
+            key2 = "type"
+            LLM_TYPE = sys_cfg_json[key1].get(key2, "openai")
+            key2 = LLM_TYPE
+            if key2 in sys_cfg_json[key1]:
+                key3a = "LLM_API_KEY"
+                if key3a in sys_cfg_json[key1][key2]:
+                    LLM_API_KEY = sys_cfg_json[key1][key2][key3a]
+                key3b = "LLM_SECRET_KEY"
+                if key3b in sys_cfg_json[key1][key2]:
+                    LLM_SECRET_KEY = sys_cfg_json[key1][key2][key3b]
+                key3c = "LLM_BASE_URL"
+                if key3c in sys_cfg_json[key1][key2]:
+                    LLM_BASE_URL = sys_cfg_json[key1][key2][key3c]
+                key3d = "LLM_MODEL"
+                if key3d in sys_cfg_json[key1][key2]:
+                    LLM_MODEL = sys_cfg_json[key1][key2][key3d]
+
     context = {
-        "OPENAI_API_KEY": sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_API_KEY"],
-        "OPENAI_BASE_URL": sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_BASE_URL"],
-        "OPENAI_MODEL": sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_MODEL"],
+        "LLM_TYPE": LLM_TYPE,
+        "LLM_API_KEY": LLM_API_KEY,
+        "LLM_SECRET_KEY": LLM_SECRET_KEY,
+        "LLM_BASE_URL": LLM_BASE_URL,
+        "LLM_MODEL": LLM_MODEL,
         }
     
     logger.debug(f"=> context = {context}")
@@ -97,50 +127,80 @@ def llm_settings(request):
     return render(request, "llm_settings.html", context)
   else:
     # try:
-      print("---------------------------------------------------------------")
-      user_id = request.session.get("user_id")
-      session_cfg = request.session.get("cfg")
+    print("---------------------------------------------------------------")
+    user_id = request.session.get("user_id")
+    session_cfg = request.session.get("cfg")
 
-      data = request.data
+    # data = request.data
+    # print(f"llm_settings===>>> request.user.is_authenticated={request.user.is_authenticated}")  # True表示存在此用户，
+    # print(f"llm_settings===>>> request.user={request.user}")  # 没有登录显示：AnonymousUser匿名用户    登录显示登录的用户对象数据
+    # print(f"llm_settings===>>> request.user.is_superuser={request.user.is_superuser}")
+    # print(f"llm_settings===>>> user_id={user_id}, cfg={session_cfg}")
+    # print(f"llm_settings===>>> data={data}")
 
-      print(f"llm_settings===>>> request.user.is_authenticated={request.user.is_authenticated}")  # True表示存在此用户，
-      print(f"llm_settings===>>> request.user={request.user}")  # 没有登录显示：AnonymousUser匿名用户    登录显示登录的用户对象数据
-      print(f"llm_settings===>>> request.user.is_superuser={request.user.is_superuser}")
-      print(f"llm_settings===>>> user_id={user_id}, cfg={session_cfg}")
-      print(f"llm_settings===>>> data={data}")
+    LLM_TYPE = request.data.get('LLM_TYPE')
+    LLM_API_KEY = request.data.get('LLM_API_KEY')
+    LLM_SECRET_KEY = request.data.get('LLM_SECRET_KEY')
+    LLM_BASE_URL = request.data.get('LLM_BASE_URL')
+    LLM_MODEL = request.data.get('LLM_MODEL')
 
-      OPENAI_API_KEY = request.data.get('OPENAI_API_KEY')
-      OPENAI_BASE_URL = request.data.get('OPENAI_BASE_URL')
-      OPENAI_MODEL = request.data.get('OPENAI_MODEL')
-      print(f"llm_settings===>>> OPENAI_API_KEY={OPENAI_API_KEY}, OPENAI_BASE_URL={OPENAI_BASE_URL}, OPENAI_MODEL={OPENAI_MODEL}")
+    logger.debug(f"llm_settings===>>> LLM_TYPE={LLM_TYPE}, LLM_API_KEY={LLM_API_KEY}, LLM_BASE_URL={LLM_BASE_URL}, LLM_MODEL={LLM_MODEL}")
 
-      sys_cfg_json = json.loads(session_cfg)
+    sys_cfg_json = json.loads(session_cfg)
 
-      cfg = CSysConfigModel.objects.get(code=sys_code, user_id=user_id)
-      if cfg == None:
+    cfg = CSysConfigModel.objects.get(code=sys_code, user_id=user_id)
+    if cfg == None:
         logger.debug("=> save default sys config to db")
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_API_KEY"] = OPENAI_API_KEY
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_BASE_URL"] = OPENAI_BASE_URL
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_MODEL"] = OPENAI_MODEL
+        sys_cfg_json["llmCfg"]["type"] = LLM_TYPE
+        sys_cfg_json["llmCfg"]["openai"]["LLM_API_KEY"] = LLM_API_KEY
+        sys_cfg_json["llmCfg"]["openai"]["LLM_SECRET_KEY"] = LLM_SECRET_KEY
+        sys_cfg_json["llmCfg"]["openai"]["LLM_BASE_URL"] = LLM_BASE_URL
+        sys_cfg_json["llmCfg"]["openai"]["LLM_MODEL"] = LLM_MODEL
         sys_config_model = CSysConfigModel(code=sys_code, config=json.dumps(sys_cfg_json), user_id=user_id)
         sys_config_model.save()
-      else:
+    else:
         logger.debug(f"=> update cfg to database")
         sys_cfg_json = json.loads(cfg.config)
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_API_KEY"] = OPENAI_API_KEY
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_BASE_URL"] = OPENAI_BASE_URL
-        sys_cfg_json["languageModelConfig"]["openai"]["OPENAI_MODEL"] = OPENAI_MODEL
+
+        logger.debug("---------------------------------------------------------------")
+        logger.debug(f"llm_settings===>>> config old={json.dumps(sys_cfg_json)}")
+        logger.debug("---------------------------------------------------------------")
+
+        sys_cfg_json["llmCfg"]["type"] = LLM_TYPE
+
+        key = "llmCfg"
+        if key in sys_cfg_json:
+            key2 = LLM_TYPE
+            logger.debug(f"llm_settings===>>> LLM_TYPE={LLM_TYPE}")
+            if key2 in sys_cfg_json[key]:
+                sys_cfg_json[key][key2]["LLM_API_KEY"] = LLM_API_KEY
+                sys_cfg_json[key][key2]["LLM_SECRET_KEY"] = LLM_SECRET_KEY
+                sys_cfg_json[key][key2]["LLM_BASE_URL"] = LLM_BASE_URL
+                sys_cfg_json[key][key2]["LLM_MODEL"] = LLM_MODEL
+                cfg.config = str(json.dumps(sys_cfg_json))
+            else:
+                tmp3 = {}
+                tmp3["LLM_API_KEY"] = LLM_API_KEY
+                tmp3["LLM_SECRET_KEY"] = LLM_SECRET_KEY
+                tmp3["LLM_BASE_URL"] = LLM_BASE_URL
+                tmp3["LLM_MODEL"] = LLM_MODEL
+                sys_cfg_json[key][key2] = tmp3
+        else:
+            logger.error("invalid configuration, contact with administrator to re-generate role")
+            return Response({"response": "invalid configuration, contact with administrator to re-generate role", "code": "500"})
+
         cfg.config = str(json.dumps(sys_cfg_json))
+
+        logger.debug("---------------------------------------------------------------")
+        logger.debug(f"llm_settings===>>> config new={json.dumps(sys_cfg_json)}")
+        logger.debug("---------------------------------------------------------------")
+
         cfg.save()
 
-      logger.debug("---------------------------------------------------------------")
-      logger.debug(f"llm_settings===>>> config={json.dumps(sys_cfg_json)}")
-      logger.debug("---------------------------------------------------------------")
+        request.session["cfg"] = json.dumps(sys_cfg_json)
+        logger.debug("---------------------------------------------------------------")
 
-      request.session["cfg"] = json.dumps(sys_cfg_json)
-      logger.debug("---------------------------------------------------------------")
-
-      return Response({"response": "ok", "code": "200"})
+        return Response({"response": "ok", "code": "200"})
     
     # except Exception as e:
     #   logger.debug("=> load sys config error: %s" % str(e))

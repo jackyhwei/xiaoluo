@@ -444,6 +444,18 @@ class CharacterRole:
         result = serializer.data
         return Response({"response": result, "code": "200"})
 
+    @api_view(['GET'])
+    def character_role_list_json(request):
+        logger.info(f"request={request}")
+        characters = CharacterRoleModel.objects.all()
+        characters_list = serialize('json', characters)
+        j = json.loads(characters_list)
+
+        logger.info(f"result={json.dumps(j)}")
+
+        return Response(j)
+    
+
 
     # @api_view(['GET'])
     # def character_role_detail(request, pk):

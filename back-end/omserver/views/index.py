@@ -29,6 +29,8 @@ def main(request):
 
     context = {"version": "0.1.2", "username": user_name}
 
+    get_config(request)
+
     return render(request, "index.html", context)
 
 def syscfg(request):
@@ -127,6 +129,10 @@ def get_config(request):
 
     logger.debug("-----------------------------------------------------")
     logger.debug(f"---------->>>>>>>> final cfg={json.dumps(sys_config_json)}")
+
+    request.session["user_id"] = id
+    request.session["cfg"] = json.dumps(sys_config_json)
+
 
     # return Response({"response": json.dumps(sys_config_json), "code": "200"})
     return Response({"response": sys_config_json, "code": "200"})
