@@ -16,7 +16,7 @@ def initSysDefault3dModels():
         { "vrm_id": "sys_05", "vrm_type": "system", "vrm_gender": "0", "vrm_name": "[商务] 印度女", "vrm_url": "model/female-indian-office-woman.vrm" },
         { "vrm_id": "sys_06", "vrm_type": "system", "vrm_gender": "0", "vrm_name": "[商务] 印度女学生", "vrm_url": "model/female-indian-teenage-woman.vrm" },
         { "vrm_id": "sys_07", "vrm_type": "system", "vrm_gender": "0", "vrm_name": "[游戏] 弥豆子", "vrm_url": "model/game.nezuko.kamado.vrm" },
-        { "vrm_id": "sys_08", "vrm_type": "system", "vrm_gender": "0", "vrm_name": "[游戏] 伊邪那美", "vrm_url": "model/xiaomei.vrm" }
+        { "vrm_id": "sys_08", "vrm_type": "system", "vrm_gender": "0", "vrm_name": "[游戏] 伊邪那美", "vrm_url": "model/xiaoluo2.vrm" }
       ]
 
       logger.debug("------------>>>>>>>>>>>initSysDefault3dModels<<<<<<<<<<<------------")

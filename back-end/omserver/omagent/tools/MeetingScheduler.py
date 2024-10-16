@@ -175,7 +175,7 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         conn.close()
         result = "成功预约了会议。时间是：{date} {time}，主题是：{content}，参会人员：{attendees}".format(date=repeat_month_day, time=start_time, content=title, attendees=attendees)
 
-        # put_message(RealtimeMessage(type="user", user_name="sys", query="", role_name="agent", content=result, emote="neutral"))
+        # put_message(ChatMessage(type="user", user_name="sys", query="", role_name="agent", content=result, emote="neutral"))
 
         return result
 
@@ -185,12 +185,12 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         '''
         load_dotenv()
 
-        OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-        OPENAI_BASE_URL = os.environ['OPENAI_BASE_URL']
-        OPENAI_MODEL = os.environ['OPENAI_MODEL']
+        LLM_API_KEY = os.environ.get('LLM_API_KEY', "")
+        LLM_BASE_URL = os.environ.get('LLM_BASE_URL', "")
+        LLM_MODEL = os.environ.get('LLM_MODEL', "")
 
-        if OPENAI_MODEL == None or OPENAI_MODEL == "":
-            OPENAI_MODEL = "gpt-3.5-turbo"
+        if LLM_MODEL == None or LLM_MODEL == "":
+            LLM_MODEL = "gpt-3.5-turbo"
 
         model: ChatOpenAI
 
@@ -198,10 +198,10 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         prompt_str = "现在时间是：" + now_time +"。请帮忙查询下面输入内容里包含的每月的第几日。返回格式示例：('15')。现在开始查询：{topic}"
 
         prompt = ChatPromptTemplate.from_template(prompt_str)
-        if OPENAI_BASE_URL != None and OPENAI_BASE_URL != "":
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, openai_api_base=OPENAI_BASE_URL, temperature=0.7, verbose=True)
+        if LLM_BASE_URL == None and LLM_BASE_URL:
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, openai_api_base=LLM_BASE_URL, temperature=0.7, verbose=True)
         else:
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, temperature=0.7, verbose=True)
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, temperature=0.7, verbose=True)
 
         # output_parser = CommaSeparatedListOutputParser()
         # chain = prompt | model | output_parser
@@ -222,12 +222,12 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         '''
         load_dotenv()
 
-        OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-        OPENAI_BASE_URL = os.environ['OPENAI_BASE_URL']
-        OPENAI_MODEL = os.environ['OPENAI_MODEL']
+        LLM_API_KEY = os.environ.get('LLM_API_KEY', "")
+        LLM_BASE_URL = os.environ.get('LLM_BASE_URL', '')
+        LLM_MODEL = os.environ.get('LLM_MODEL', "")
 
-        if OPENAI_MODEL == None or OPENAI_MODEL == "":
-            OPENAI_MODEL = "gpt-3.5-turbo"
+        if LLM_MODEL == None or LLM_MODEL == "":
+            LLM_MODEL = "gpt-3.5-turbo"
 
         model: ChatOpenAI
 
@@ -235,10 +235,10 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         prompt_str = "现在时间是：" + now_time +"。请帮忙查询下面输入内容里包含的每年的几月几日。返回格式示例：('12-15')。现在开始查询：{topic}"
 
         prompt = ChatPromptTemplate.from_template(prompt_str)
-        if OPENAI_BASE_URL != None and OPENAI_BASE_URL != "":
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, openai_api_base=OPENAI_BASE_URL, temperature=0.7, verbose=True)
+        if LLM_BASE_URL != None and LLM_BASE_URL != "":
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, openai_api_base=LLM_BASE_URL, temperature=0.7, verbose=True)
         else:
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, temperature=0.7, verbose=True)
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, temperature=0.7, verbose=True)
 
         # output_parser = CommaSeparatedListOutputParser()
         # chain = prompt | model | output_parser
@@ -258,12 +258,12 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
 
         load_dotenv()
 
-        OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-        OPENAI_BASE_URL = os.environ['OPENAI_BASE_URL']
-        OPENAI_MODEL = os.environ['OPENAI_MODEL']
+        LLM_API_KEY = os.environ.get('LLM_API_KEY', "")
+        LLM_BASE_URL = os.environ.get('LLM_BASE_URL', '')
+        LLM_MODEL = os.environ.get('LLM_MODEL', "")
 
-        if OPENAI_MODEL == None or OPENAI_MODEL == "":
-            OPENAI_MODEL = "gpt-3.5-turbo"
+        if LLM_MODEL == None or LLM_MODEL == "":
+            LLM_MODEL = "gpt-3.5-turbo"
 
         model: ChatOpenAI
 
@@ -280,10 +280,10 @@ class MeetingScheduler(BaseTool, OddMetaToolsBase):
         prompt_str = "现在时间是：" + now_time +"。请帮忙查询下面输入内容里包含的日期和时间信息。返回格式示例：('2024-05-18', '19:15')。现在开始查询：{topic}"
 
         prompt = ChatPromptTemplate.from_template(prompt_str)
-        if OPENAI_BASE_URL != None and OPENAI_BASE_URL != "":
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, openai_api_base=OPENAI_BASE_URL, temperature=0.7, verbose=True)
+        if LLM_BASE_URL != None and LLM_BASE_URL != "":
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, openai_api_base=LLM_BASE_URL, temperature=0.7, verbose=True)
         else:
-            model = ChatOpenAI(streaming=True, model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, temperature=0.7, verbose=True)
+            model = ChatOpenAI(streaming=True, model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, temperature=0.7, verbose=True)
 
         # output_parser = CommaSeparatedListOutputParser()
         # chain = prompt | model | output_parser

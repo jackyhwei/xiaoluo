@@ -66,11 +66,11 @@ class DouyinLiveClient():
 
     def __init__(self) -> None:
         logger.debug("====================== init DouyinLiveClient ====================== ")
-        self.room_id = os.environ['ROOM_ID_BILI']
-        uid = os.environ['ROOM_UID_BILI']
+        self.room_id = os.environ.get('ROOM_ID_BILI', "")
+        self.cookie_str = os.environ.get('ROOM_COOKIE_BILI', "")
+        uid = os.environ.get('ROOM_UID_BILI', "")
         if uid:
             self.uid = int(uid)
-        self.cookie_str = os.environ['ROOM_COOKIE_BILI']
         logger.debug(f"=> room_id:{ self.room_id}")
         logger.debug(f"=> uid:{self.uid}")
         logger.debug(f"=> cookie_str:{self.cookie_str}")

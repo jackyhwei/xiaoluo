@@ -30,7 +30,7 @@ def initSysDefaultRoles():
 你的回复应该简短，最多包含三句话，每句话不超过20个字。
                         """,
                     "custom_role_template_type": "zh",
-                    "model_id": "model/xiaomei.vrm",
+                    "model_id": "model/xiaoluo2.vrm",
                     "scene_id": "background/nex3.png",
                     "voice_id": "zh-CN-XiaoyiNeural"
                 },

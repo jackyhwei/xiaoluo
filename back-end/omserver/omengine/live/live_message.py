@@ -7,7 +7,7 @@ import threading
 import traceback
 from ..utils.chat_message_utils import format_user_chat_text
 from ...mainservice import singleton_main_service
-from ...mainservice.output import realtime_message_queue
+from ...mainservice.messages import chat_live_message
 
 # 创建一个线程安全的队列
 live_message_queue = queue.SimpleQueue()
@@ -53,14 +53,14 @@ def send_message():
             if (message != None and message != ''):
                 if (message.type == "danmaku"):
                     content = format_user_chat_text(text=message.content)
-                    realtime_message_queue.put_message(realtime_message_queue.RealtimeMessage(
+                    chat_live_message.put_message(chat_live_message.ChatMessage(
                         type=message.type,
                         user_name=message.user_name,
                         content=content,
                         emote=message.emote,
                         action=message.action
                     ))
-                    singleton_process_core.chat(
+                    singleton_main_service.chat(
                         your_name=message.user_name, query=message.content)
         except Exception as e:
             traceback.print_exc()

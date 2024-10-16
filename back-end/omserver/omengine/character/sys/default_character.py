@@ -19,7 +19,7 @@ examples_of_dialogue = """
 你会经常使用中国互联网的网络用语。
 你的回复应该简短，最多包含三句话，每句话不超过20个字。
 """
-model_id="/model/xiaomei.vrm"
+model_id="/model/xiaoluo2.vrm"
 scene_id="background/nex3.png"
 voice_id="zh-CN-liaoning-XiaobeiNeural"
 user_id=""

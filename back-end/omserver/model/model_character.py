@@ -23,6 +23,7 @@ class CharacterRoleModel(models.Model):
   voice_id = models.CharField(max_length=32, null=True, blank=True, default="")
   user_id  = models.CharField(max_length=32, null=True, blank=True, default="")
   permission = models.SmallIntegerField(default=0, null=True, blank=True)
+  audio_url  = models.CharField(max_length=250, null=True, blank=True, default="")
   
   def __str__(self):
       return self.role_name

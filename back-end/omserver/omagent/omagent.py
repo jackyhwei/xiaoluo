@@ -41,7 +41,7 @@ from langchain_community.callbacks.manager import get_openai_callback
 
 from langchain.retrievers import TimeWeightedVectorStoreRetriever
 
-from omserver.mainservice.output.realtime_message_queue import RealtimeMessage, put_message
+from omserver.mainservice.messages.chat_live_message import ChatLiveMessage, put_message
 from omserver.omengine.utils.datatime_utils import get_current_time
 
 logger = logging.getLogger(__name__)
@@ -51,19 +51,14 @@ logger = logging.getLogger(__name__)
 #     manager = RandomEmotion()
 #     random_action = manager.random_action()
 #     logger.info(f"Do Agent Action: {msg}, Emote:{random_action.random_emote}")
-#     put_message(RealtimeMessage(type="agent_action", user_name="agent", content=msg, emote=random_action.random_emote))
+#     put_message(ChatMessage(type="agent_action", user_name="agent", content=msg, emote=random_action.random_emote))
 
 
 class OddMetaAgentCore():
     def __init__(self):
-        # utils.load_config()
-        # os.environ['OPENAI_API_KEY'] = utils.key_gpt_api_key
-        # os.environ['OPENAI_API_BASE'] = utils.gpt_base_url
-        # if str(utils.is_proxy) == '1':
-        #     os.environ["OPENAI_PROXY"] = utils.proxy_config
-        OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-        OPENAI_BASE_URL = os.environ['OPENAI_BASE_URL']
-        OPENAI_MODEL = os.environ['OPENAI_MODEL']
+        LLM_API_KEY = os.environ.get('LLM_API_KEY', "")
+        LLM_BASE_URL = os.environ.get('LLM_BASE_URL', "")
+        LLM_MODEL = os.environ.get('LLM_MODEL', "")
 
         # #使用open ai embedding
         # embedding_size = 1536  # OpenAIEmbeddings 的维度
@@ -71,7 +66,7 @@ class OddMetaAgentCore():
         # embedding_fn = OpenAIEmbeddings()
 
         #创建llm
-        self.llm = ChatOpenAI(model_name=OPENAI_MODEL, openai_api_key=OPENAI_API_KEY, openai_api_base=OPENAI_BASE_URL, temperature=0.7, verbose=True)
+        self.llm = ChatOpenAI(model_name=LLM_MODEL, openai_api_key=LLM_API_KEY, openai_api_base=LLM_BASE_URL, temperature=0.7, verbose=True)
 
         # #创建向量数据库
         # def relevance_score_fn(score: float) -> float:
@@ -264,7 +259,7 @@ output：
         if len(self.chat_history) > 5:
             self.chat_history.pop(0)
 
-        put_message(RealtimeMessage(type="user", user_name="sys", query=input_text, 
+        put_message(ChatLiveMessage(type="user", user_name="sys", query=input_text, 
                                     role_name="agent", content=chat_text, emote="neutral"))
 
         return self.is_use_say_tool, chat_text

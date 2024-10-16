@@ -20,7 +20,7 @@ class LiveConnecterTask():
         
         # 启动后台线程
         background_thread.start()
-        logger.info("=> Start InsightMessageQueryJobTask Success")
+        logger.info("=> Start Live Connecter Task(used to interact with Bilibili/Douyin/Taobao/Kuaishou) Success")
 
 
 class BaseLiveConnecter(ABC):
@@ -97,9 +97,9 @@ class LiveDriver:
 
 
 def live_connecter_main():
-#     global enable_bili_live
+#    global enable_bili_live
 #    if enable_bili_live == True:
-    enable_bili_live = os.environ['live_connecter_enabled']
+    enable_bili_live = os.environ.get('enabled_live_connecter', False)
 
     if True == enable_bili_live:
         background_thread = threading.Thread(target=start_live_client)

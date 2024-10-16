@@ -157,10 +157,11 @@ class GenerationEmote():
         self.llm_model_driver = llm_model_driver
         self.llm_model_driver_type = llm_model_driver_type
 
-    def generation_emote(self, query: str) -> str:
+    def generation_emote(self, query: str, user_msg: str = None) -> str:
+        logger.debug(f"=> generating emote for:{query}")
         prompt = self.input_prompt + self.output_prompt
         result = self.llm_model_driver.chat(
-            prompt=prompt, type=self.llm_model_driver_type, role_name="", your_name="", kb_id="", query=f"text:{query}", short_history=[], long_history="")
+            prompt=prompt, type=self.llm_model_driver_type, role_name="", your_name="", kb_id=user_msg, query=f"text:{query}", short_history=[], long_history="")
         logger.debug(f"=> emote:{result}")
         emote = "neutral"
         try:

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 scheduled_tasks = {}
 agent_running = False
 
-agent = OddMetaAgentCore()
+# agent = OddMetaAgentCore()
 
 # 数据库初始化
 def init_db():

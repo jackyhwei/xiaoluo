@@ -137,7 +137,7 @@ class ScheduleAdder(BaseTool, OddMetaToolsBase):
             logger.exception(f"新增日程安排失败，请重新尝试: {str(e)}")
             result = "新增日程安排失败，请重新尝试"
 
-        # put_message(RealtimeMessage(type="user", user_name="sys", query="", role_name="agent", content=result, emote="neutral"))
+        # put_message(ChatMessage(type="user", user_name="sys", query="", role_name="agent", content=result, emote="neutral"))
 
         return result
 
